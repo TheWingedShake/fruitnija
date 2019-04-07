@@ -17,10 +17,6 @@ class StartActivity extends Activity{
         this.createStartButton();
     }
 
-    onDestroy(){
-
-    }
-
     createStartButton(){
         this.handleStartButtonClick = () => {
             startButton.removeEventListener('click', this.handleStartButtonClick);

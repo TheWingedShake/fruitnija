@@ -9,7 +9,7 @@ import { Player } from './player';
 
 class GameApp{
 
-    constructor(options){
+    constructor(){
         const canvas = document.getElementById('gameapp');
         this.stage = new createjs.Stage(canvas);
         this.stage.enableDOMEvents(true);
@@ -27,6 +27,7 @@ class GameApp{
         assetsManager.loadSounds(soundUrls);
         assetsManager.loadImage(imgsUrls)
         .then(() => {
+            logger.log('Resources loaded.');
             this.listenEvents();
             this.runActivity(this.currentActivityIndex);
         })

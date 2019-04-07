@@ -184,6 +184,11 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
         this.nextFruitLaunch = _options__WEBPACK_IMPORTED_MODULE_2__["options"].fruitReloadTime;
         this.fruitCountJumpTime = _options__WEBPACK_IMPORTED_MODULE_2__["options"].fruitTimeStep;
         this.fruitLaunchCount = _options__WEBPACK_IMPORTED_MODULE_2__["options"].fruitStartCount;
+    }
+
+    onInit(){
+        super.onInit();
+        this.setBackground();
         this.handleTick = () => {
             this.time -=  1 / createjs.Ticker.framerate;
             this.nextFruitLaunch -= 1 / createjs.Ticker.framerate;
@@ -205,12 +210,6 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
                 }
             }
         };
-    }
-
-    onInit(){
-        super.onInit();
-        this.setBackground();
-        this.launchFruit();
         createjs.Ticker.addEventListener("tick", this.handleTick);
     }
 
@@ -298,7 +297,7 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
     fallDownCutShape(shape, coords){
         const fallTime = this.getFallTime(coords.y);
         createjs.Tween.get(shape, {loop: false, onComplete: () => {
-            _loggers_logger__WEBPACK_IMPORTED_MODULE_1__["logger"].log('cut part has been fallen');
+            this.passiveObjectsContainer.removeChild(shape);
         }})
         .to({x: coords.x, y: _options__WEBPACK_IMPORTED_MODULE_2__["options"].h + _options__WEBPACK_IMPORTED_MODULE_2__["options"].fruitStartYOffset, rotation: coords.rotation}, fallTime, createjs.Ease.getPowIn(2));
     }
@@ -330,11 +329,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResultActivity", function() { return ResultActivity; });
 /* harmony import */ var _activity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./activity */ "./app/activities/activity.js");
 /* harmony import */ var _options__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../options */ "./app/options.js");
+/* harmony import */ var _loggers_logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../loggers/logger */ "./app/loggers/logger.js");
+
 
 
 class ResultActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
 
     constructor(stage){
+        _loggers_logger__WEBPACK_IMPORTED_MODULE_2__["logger"].log('Result activity created');
         super(stage);
     }
 
@@ -391,10 +393,6 @@ class StartActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
 
     createUI(){
         this.createStartButton();
-    }
-
-    onDestroy(){
-
     }
 
     createStartButton(){
@@ -796,7 +794,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class GameApp{
 
-    constructor(options){
+    constructor(){
         const canvas = document.getElementById('gameapp');
         this.stage = new createjs.Stage(canvas);
         this.stage.enableDOMEvents(true);
@@ -814,6 +812,7 @@ class GameApp{
         _assetsManager__WEBPACK_IMPORTED_MODULE_3__["assetsManager"].loadSounds(_options__WEBPACK_IMPORTED_MODULE_4__["soundUrls"]);
         _assetsManager__WEBPACK_IMPORTED_MODULE_3__["assetsManager"].loadImage(_options__WEBPACK_IMPORTED_MODULE_4__["imgsUrls"])
         .then(() => {
+            _loggers_logger__WEBPACK_IMPORTED_MODULE_5__["logger"].log('Resources loaded.');
             this.listenEvents();
             this.runActivity(this.currentActivityIndex);
         })
@@ -855,13 +854,9 @@ class GameApp{
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _gameApp__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameApp */ "./app/gameApp.js");
 
-const options = {
-    width: 397,
-    height: 632
-};
 window.onload = () => {
     createjs.MotionGuidePlugin.install();
-    const gameApp = new _gameApp__WEBPACK_IMPORTED_MODULE_0__["GameApp"](options);
+    const gameApp = new _gameApp__WEBPACK_IMPORTED_MODULE_0__["GameApp"]();
     gameApp.init();
 };
 

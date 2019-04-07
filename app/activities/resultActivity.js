@@ -1,8 +1,10 @@
 import { Activity } from './activity';
 import { options } from '../options';
+import { logger } from '../loggers/logger';
 class ResultActivity extends Activity{
 
     constructor(stage){
+        logger.log('Result activity created');
         super(stage);
     }
 

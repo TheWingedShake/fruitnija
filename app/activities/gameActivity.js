@@ -17,6 +17,11 @@ class GameActivity extends Activity{
         this.nextFruitLaunch = options.fruitReloadTime;
         this.fruitCountJumpTime = options.fruitTimeStep;
         this.fruitLaunchCount = options.fruitStartCount;
+    }
+
+    onInit(){
+        super.onInit();
+        this.setBackground();
         this.handleTick = () => {
             this.time -=  1 / createjs.Ticker.framerate;
             this.nextFruitLaunch -= 1 / createjs.Ticker.framerate;
@@ -38,12 +43,6 @@ class GameActivity extends Activity{
                 }
             }
         };
-    }
-
-    onInit(){
-        super.onInit();
-        this.setBackground();
-        this.launchFruit();
         createjs.Ticker.addEventListener("tick", this.handleTick);
     }
 
@@ -131,7 +130,7 @@ class GameActivity extends Activity{
     fallDownCutShape(shape, coords){
         const fallTime = this.getFallTime(coords.y);
         createjs.Tween.get(shape, {loop: false, onComplete: () => {
-            logger.log('cut part has been fallen');
+            this.passiveObjectsContainer.removeChild(shape);
         }})
         .to({x: coords.x, y: options.h + options.fruitStartYOffset, rotation: coords.rotation}, fallTime, createjs.Ease.getPowIn(2));
     }

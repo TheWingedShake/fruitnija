@@ -1,5 +1,4 @@
 import { assetsManager } from '../assetsManager';
-import { options } from '../options';
 class Activity{
 
     constructor(stage){
@@ -17,7 +16,6 @@ class Activity{
         background.x = 0;
         background.y = 0;
         this.backgroundContainer.addChild(background);
-        //this.stage.addChild(background);
     }
 
     onInit(){
