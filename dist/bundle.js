@@ -286,6 +286,7 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
         spotShape.scale = _options__WEBPACK_IMPORTED_MODULE_2__["options"].imgScale;
         spotShape.x = coords.x;
         spotShape.y = coords.y;
+        spotShape.alpha = 0.7;
         spotShape.regX = spotImage.width / 2;
         spotShape.regY = spotImage.height / 2;
 

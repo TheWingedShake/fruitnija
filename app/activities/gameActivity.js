@@ -122,6 +122,7 @@ class GameActivity extends Activity{
         spotShape.scale = options.imgScale;
         spotShape.x = coords.x;
         spotShape.y = coords.y;
+        spotShape.alpha = 0.7;
         spotShape.regX = spotImage.width / 2;
         spotShape.regY = spotImage.height / 2;
 
