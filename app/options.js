@@ -1,8 +1,8 @@
 export const options = {
     w: 422,
     h: 750,
-    fruitStartYOffset: 50,
-    imgScale: 0.5,
+    fruitStartYOffset: 150,
+    imgScale: 1,
     fallTime: 1500,
     fruitReloadTime: 2,
     fruitTimeStep: 8,

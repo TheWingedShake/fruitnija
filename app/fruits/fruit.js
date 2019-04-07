@@ -7,7 +7,11 @@ class Fruit{
         this.id = '';
     }
 
-    generatePath(){
+    generatePath(imgWidth){
+        const xLeftRange = [imgWidth / 2, options.w/3];
+        const yTopRange = [100, options.h / 2];
+        const xRightRange = [2 * options.w/3, options.w - imgWidth / 2];
+
         const leftBottomX = Math.round(Math.random() * (xLeftRange[1] - xLeftRange[0])) + xLeftRange[0];
         const leftTopX = Math.round(Math.random() * (xLeftRange[1] - xLeftRange[0])) + xLeftRange[0];
         const rightBottomX = Math.round(Math.random() * (xRightRange[1] - xRightRange[0])) + xRightRange[0];
@@ -61,9 +65,5 @@ class Fruit{
     }
 
 }
-
-const xLeftRange = [0, options.w/3];
-const yTopRange = [100, options.h / 2];
-const xRightRange = [2 * options.w/3, options.w];
 
 export { Fruit };

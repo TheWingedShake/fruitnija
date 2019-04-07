@@ -63,11 +63,12 @@ class GameActivity extends Activity{
     launchFruit(){
         const fruit = this.getRandomFruit();
         const imgFruit = this.assetsLoader.getImage(fruit.id);
+        const path = fruit.generatePath(imgFruit.width);
         const fruitShape = new createjs.Bitmap(imgFruit);
         fruitShape.scale = options.imgScale;
         fruitShape.regX = imgFruit.width / 2;
         fruitShape.regY = imgFruit.height / 2;
-        fruitShape.x = 100;
+        fruitShape.x = path.up[0];
         fruitShape.y = options.h + options.fruitStartYOffset;
 
         fruitShape.on('click', () => {
@@ -84,8 +85,9 @@ class GameActivity extends Activity{
                 }
             );
         });
-        const path = fruit.generatePath();
-        createjs.Tween.get(fruitShape, {loop: false})
+        createjs.Tween.get(fruitShape, {loop: false, onComplete: () => {
+            this.activeObjectsContainer.removeChild(fruitShape);
+        }})
         .to({guide: {path: path.up}, rotation: 360}, fruit.time, createjs.Ease.getPowOut(1.3))
         .to({guide: {path: path.down}, rotation: 720}, fruit.time, createjs.Ease.getPowIn(1.3));
 

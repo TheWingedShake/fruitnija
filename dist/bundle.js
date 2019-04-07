@@ -230,11 +230,12 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
     launchFruit(){
         const fruit = this.getRandomFruit();
         const imgFruit = this.assetsLoader.getImage(fruit.id);
+        const path = fruit.generatePath(imgFruit.width);
         const fruitShape = new createjs.Bitmap(imgFruit);
         fruitShape.scale = _options__WEBPACK_IMPORTED_MODULE_2__["options"].imgScale;
         fruitShape.regX = imgFruit.width / 2;
         fruitShape.regY = imgFruit.height / 2;
-        fruitShape.x = 100;
+        fruitShape.x = path.up[0];
         fruitShape.y = _options__WEBPACK_IMPORTED_MODULE_2__["options"].h + _options__WEBPACK_IMPORTED_MODULE_2__["options"].fruitStartYOffset;
 
         fruitShape.on('click', () => {
@@ -251,8 +252,9 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
                 }
             );
         });
-        const path = fruit.generatePath();
-        createjs.Tween.get(fruitShape, {loop: false})
+        createjs.Tween.get(fruitShape, {loop: false, onComplete: () => {
+            this.activeObjectsContainer.removeChild(fruitShape);
+        }})
         .to({guide: {path: path.up}, rotation: 360}, fruit.time, createjs.Ease.getPowOut(1.3))
         .to({guide: {path: path.down}, rotation: 720}, fruit.time, createjs.Ease.getPowIn(1.3));
 
@@ -528,7 +530,11 @@ class Fruit{
         this.id = '';
     }
 
-    generatePath(){
+    generatePath(imgWidth){
+        const xLeftRange = [imgWidth / 2, _options__WEBPACK_IMPORTED_MODULE_0__["options"].w/3];
+        const yTopRange = [100, _options__WEBPACK_IMPORTED_MODULE_0__["options"].h / 2];
+        const xRightRange = [2 * _options__WEBPACK_IMPORTED_MODULE_0__["options"].w/3, _options__WEBPACK_IMPORTED_MODULE_0__["options"].w - imgWidth / 2];
+
         const leftBottomX = Math.round(Math.random() * (xLeftRange[1] - xLeftRange[0])) + xLeftRange[0];
         const leftTopX = Math.round(Math.random() * (xLeftRange[1] - xLeftRange[0])) + xLeftRange[0];
         const rightBottomX = Math.round(Math.random() * (xRightRange[1] - xRightRange[0])) + xRightRange[0];
@@ -582,10 +588,6 @@ class Fruit{
     }
 
 }
-
-const xLeftRange = [0, _options__WEBPACK_IMPORTED_MODULE_0__["options"].w/3];
-const yTopRange = [100, _options__WEBPACK_IMPORTED_MODULE_0__["options"].h / 2];
-const xRightRange = [2 * _options__WEBPACK_IMPORTED_MODULE_0__["options"].w/3, _options__WEBPACK_IMPORTED_MODULE_0__["options"].w];
 
 
 
@@ -964,8 +966,8 @@ __webpack_require__.r(__webpack_exports__);
 const options = {
     w: 422,
     h: 750,
-    fruitStartYOffset: 50,
-    imgScale: 0.5,
+    fruitStartYOffset: 150,
+    imgScale: 1,
     fallTime: 1500,
     fruitReloadTime: 2,
     fruitTimeStep: 8,
