@@ -64,6 +64,21 @@ class Fruit{
         createjs.Sound.play('swordUnsheathing');
     }
 
+    getInitedCutPartShift(size){
+        return {
+            right: {
+                x: 0,
+                y: 0,
+                rotation: 0
+            },
+            left: {
+                x: 0,
+                y: 0,
+                rotation: 0
+            }
+        }
+    }
+
 }
 
 export { Fruit };

@@ -81,6 +81,10 @@ class GameActivity extends Activity{
                     x: fruitShape.x,
                     y: fruitShape.y,
                     rotation: fruitShape.rotation
+                },
+                {
+                    width: fruitShape.image.width,
+                    height: fruitShape.image.height
                 }
             );
         });
@@ -93,22 +97,23 @@ class GameActivity extends Activity{
         this.activeObjectsContainer.addChild(fruitShape);
     }
 
-    placeCutFruit(fruit, coords){
+    placeCutFruit(fruit, coords, size){
         const cutParts = fruit.getCutParts();
+        const initialShift = fruit.getInitedCutPartShift(size);
 
         const leftPartImage = this.assetsLoader.getImage(cutParts.l);
         const leftPartShape = new createjs.Bitmap(leftPartImage);
         leftPartShape.scale = options.imgScale;
-        leftPartShape.x = coords.x - leftPartShape.scale * leftPartImage.width / 2;
-        leftPartShape.y = coords.y;
+        leftPartShape.x = coords.x - leftPartShape.scale * leftPartImage.width / 2 + initialShift.left.x;
+        leftPartShape.y = coords.y + initialShift.left.y;
         leftPartShape.regX = leftPartImage.width / 2;
         leftPartShape.regY = leftPartImage.height / 2;
 
         const rightPartImage = this.assetsLoader.getImage(cutParts.r);
         const rightPartShape = new createjs.Bitmap(rightPartImage);
         rightPartShape.scale = options.imgScale;
-        rightPartShape.x = coords.x + rightPartShape.scale * rightPartImage.width / 2 ;
-        rightPartShape.y = coords.y;
+        rightPartShape.x = coords.x + rightPartShape.scale * rightPartImage.width / 2 + initialShift.right.x;
+        rightPartShape.y = coords.y + initialShift.right.y;
         rightPartShape.regX = rightPartImage.width / 2;
         rightPartShape.regY = rightPartImage.height / 2;
 
@@ -123,8 +128,8 @@ class GameActivity extends Activity{
         this.passiveObjectsContainer.addChild(leftPartShape);
         this.passiveObjectsContainer.addChild(rightPartShape);
         this.backgroundContainer.addChild(spotShape);
-        this.fallDownCutShape(leftPartShape, {x: leftPartShape.x, y: leftPartShape.y, rotation: -90});
-        this.fallDownCutShape(rightPartShape, {x: rightPartShape.x, y: rightPartShape.y, rotation: 90});        
+        this.fallDownCutShape(leftPartShape, {x: leftPartShape.x - size.width / 2, y: leftPartShape.y, rotation: -90});
+        this.fallDownCutShape(rightPartShape, {x: rightPartShape.x + size.width / 2, y: rightPartShape.y, rotation: 90});        
     }
 
     fallDownCutShape(shape, coords){

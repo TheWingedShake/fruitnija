@@ -97,8 +97,6 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Activity", function() { return Activity; });
 /* harmony import */ var _assetsManager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../assetsManager */ "./app/assetsManager.js");
-/* harmony import */ var _options__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../options */ "./app/options.js");
-
 
 class Activity{
 
@@ -117,7 +115,6 @@ class Activity{
         background.x = 0;
         background.y = 0;
         this.backgroundContainer.addChild(background);
-        //this.stage.addChild(background);
     }
 
     onInit(){
@@ -248,6 +245,10 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
                     x: fruitShape.x,
                     y: fruitShape.y,
                     rotation: fruitShape.rotation
+                },
+                {
+                    width: fruitShape.image.width,
+                    height: fruitShape.image.height
                 }
             );
         });
@@ -260,22 +261,23 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
         this.activeObjectsContainer.addChild(fruitShape);
     }
 
-    placeCutFruit(fruit, coords){
+    placeCutFruit(fruit, coords, size){
         const cutParts = fruit.getCutParts();
+        const initialShift = fruit.getInitedCutPartShift(size);
 
         const leftPartImage = this.assetsLoader.getImage(cutParts.l);
         const leftPartShape = new createjs.Bitmap(leftPartImage);
         leftPartShape.scale = _options__WEBPACK_IMPORTED_MODULE_2__["options"].imgScale;
-        leftPartShape.x = coords.x - leftPartShape.scale * leftPartImage.width / 2;
-        leftPartShape.y = coords.y;
+        leftPartShape.x = coords.x - leftPartShape.scale * leftPartImage.width / 2 + initialShift.left.x;
+        leftPartShape.y = coords.y + initialShift.left.y;
         leftPartShape.regX = leftPartImage.width / 2;
         leftPartShape.regY = leftPartImage.height / 2;
 
         const rightPartImage = this.assetsLoader.getImage(cutParts.r);
         const rightPartShape = new createjs.Bitmap(rightPartImage);
         rightPartShape.scale = _options__WEBPACK_IMPORTED_MODULE_2__["options"].imgScale;
-        rightPartShape.x = coords.x + rightPartShape.scale * rightPartImage.width / 2 ;
-        rightPartShape.y = coords.y;
+        rightPartShape.x = coords.x + rightPartShape.scale * rightPartImage.width / 2 + initialShift.right.x;
+        rightPartShape.y = coords.y + initialShift.right.y;
         rightPartShape.regX = rightPartImage.width / 2;
         rightPartShape.regY = rightPartImage.height / 2;
 
@@ -290,8 +292,8 @@ class GameActivity extends _activity__WEBPACK_IMPORTED_MODULE_0__["Activity"]{
         this.passiveObjectsContainer.addChild(leftPartShape);
         this.passiveObjectsContainer.addChild(rightPartShape);
         this.backgroundContainer.addChild(spotShape);
-        this.fallDownCutShape(leftPartShape, {x: leftPartShape.x, y: leftPartShape.y, rotation: -90});
-        this.fallDownCutShape(rightPartShape, {x: rightPartShape.x, y: rightPartShape.y, rotation: 90});        
+        this.fallDownCutShape(leftPartShape, {x: leftPartShape.x - size.width / 2, y: leftPartShape.y, rotation: -90});
+        this.fallDownCutShape(rightPartShape, {x: rightPartShape.x + size.width / 2, y: rightPartShape.y, rotation: 90});        
     }
 
     fallDownCutShape(shape, coords){
@@ -585,6 +587,21 @@ class Fruit{
         createjs.Sound.play('swordUnsheathing');
     }
 
+    getInitedCutPartShift(size){
+        return {
+            right: {
+                x: 0,
+                y: 0,
+                rotation: 0
+            },
+            left: {
+                x: 0,
+                y: 0,
+                rotation: 0
+            }
+        }
+    }
+
 }
 
 
@@ -758,6 +775,21 @@ class YellowFruit extends _fruit__WEBPACK_IMPORTED_MODULE_0__["Fruit"]{
             r: 'yellowFruitR',
             s: 'yellowFruitS'
         };
+    }
+
+    getInitedCutPartShift(size){
+        return {
+            right: {
+                x: -size.width / 2,
+                y: size.height / 4,
+                rotation: 90
+            },
+            left: {
+                x: size.width / 2,
+                y: -size.height / 4,
+                rotation: 90
+            }
+        }
     }
 
 }
