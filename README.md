@@ -1,4 +1,4 @@
-Requirments: installed node.js.
+Requirments: installed node.js, mozilla firefox or chrome.
 
 Instructions:
 1. Download or clone.
