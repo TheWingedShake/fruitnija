@@ -17,6 +17,7 @@ class GameActivity extends Activity{
         this.nextFruitLaunch = options.fruitReloadTime;
         this.fruitCountJumpTime = options.fruitTimeStep;
         this.fruitLaunchCount = options.fruitStartCount;
+        this.objects = [];
     }
 
     onInit(){
@@ -29,6 +30,7 @@ class GameActivity extends Activity{
             this.timeObject.set({text: `Time: ${Math.round(this.time)}`});
             if(this.time <= 0){
                 createjs.Ticker.removeEventListener("tick", this.handleTick);
+                this.objects = [];
                 this.stage.dispatchEvent('nextAcitity');
                 return;
             }
@@ -42,6 +44,7 @@ class GameActivity extends Activity{
                     this.launchFruit();
                 }
             }
+            this.processObjects();
         };
         createjs.Ticker.addEventListener("tick", this.handleTick);
     }
@@ -59,6 +62,15 @@ class GameActivity extends Activity{
         this.interfaceContainer.addChild(this.timeObject);
     }
 
+    processObjects(){
+        for(let i = 0; i < this.objects.length; i++){
+            this.objects[i].move();
+            if(this.objects[i].isOut()){
+                this.objects[i].removeShape();
+            }
+        }
+    }
+
     launchFruit(){
         const fruit = this.getRandomFruit();
         const imgFruit = this.assetsLoader.getImage(fruit.id);
@@ -69,11 +81,13 @@ class GameActivity extends Activity{
         fruitShape.regY = imgFruit.height / 2;
         fruitShape.x = path.up[0];
         fruitShape.y = options.h + options.fruitStartYOffset;
-
+        fruit.setShape(fruitShape);
+        fruit.initMovement();
         fruitShape.on('click', () => {
             this.player.addScore(fruit.score);
             this.scoreObject.set({text: `Score: ${this.player.score}`});
             this.activeObjectsContainer.removeChild(fruitShape);
+            this.objects.splice(this.objects.indexOf(fruit), 1);
             fruit.onCut();
             this.placeCutFruit(
                 fruit,
@@ -88,11 +102,11 @@ class GameActivity extends Activity{
                 }
             );
         });
-        createjs.Tween.get(fruitShape, {loop: false, onComplete: () => {
+        fruitShape.addEventListener('fruitout', () => {
+            this.objects.splice(this.objects.indexOf(fruit), 1);
             this.activeObjectsContainer.removeChild(fruitShape);
-        }})
-        .to({guide: {path: path.up}, rotation: 360}, fruit.time, createjs.Ease.getPowOut(1.3))
-        .to({guide: {path: path.down}, rotation: 720}, fruit.time, createjs.Ease.getPowIn(1.3));
+        });
+        this.objects.push(fruit);
 
         this.activeObjectsContainer.addChild(fruitShape);
     }
