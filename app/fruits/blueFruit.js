@@ -16,6 +16,21 @@ class BlueFruit extends Fruit{
         };
     }
 
+    getInitedCutPartShift(size){
+        return {
+            right: {
+                x: -size.width/4,
+                y: 0,
+                rotation: 0
+            },
+            left: {
+                x: size.width/4,
+                y: 0,
+                rotation: 0
+            }
+        };
+    }
+
 }
 
 export { BlueFruit };
