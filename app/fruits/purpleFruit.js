@@ -16,21 +16,6 @@ class PurpleFruit extends Fruit{
         };
     }
 
-    getInitedCutPartShift(size){
-        return {
-            right: {
-                x: -15,
-                y: 0,
-                rotation: 0
-            },
-            left: {
-                x: 15,
-                y: 0,
-                rotation: 0
-            }
-        };
-    }
-
 }
 
 export { PurpleFruit };

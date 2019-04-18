@@ -16,21 +16,6 @@ class GreenFruit extends Fruit{
         };
     }
 
-    getInitedCutPartShift(size){
-        return {
-            right: {
-                x: -10,
-                y: 0,
-                rotation: 0
-            },
-            left: {
-                x: 10,
-                y: 0,
-                rotation: 0
-            }
-        };
-    }
-
 }
 
 export { GreenFruit };

@@ -6,11 +6,7 @@ export const options = {
     fallTime: 1500,
     fruitReloadTime: 2,
     fruitTimeStep: 8,
-    fruitStartCount: 1,
-    maxSpeed: 800,
-    minSpeed: 550,
-    acceleration: -300,
-    maxRotationSpeed: 180
+    fruitStartCount: 1
 };
 export const imgsUrls = [
     {
