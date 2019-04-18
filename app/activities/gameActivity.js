@@ -1,6 +1,8 @@
 import { Activity } from './activity';
 import { logger } from '../loggers/logger';
 import { options } from '../options';
+import { coordsHelper } from '../utils/coordsHelper';
+import { GameObject } from '../fruits/gameObject';
 import { RedFruit } from '../fruits/redFruit';
 import { BlueFruit } from '../fruits/blueFruit';
 import { GreenFruit } from '../fruits/greenFruit';
@@ -44,7 +46,9 @@ class GameActivity extends Activity{
             if(this.nextFruitLaunch <= 0){
                 this.nextFruitLaunch = options.fruitReloadTime;
                 for(let i = 0; i < this.fruitLaunchCount; i++){
-                    this.launchFruit();
+                    setTimeout(() => {
+                        this.launchFruit();
+                    }, i * 100);
                 }
             }
             this.processObjects();
@@ -93,6 +97,7 @@ class GameActivity extends Activity{
         fruitShape.x = path.up[0];
         fruitShape.y = options.h + options.fruitStartYOffset;
         fruit.setShape(fruitShape);
+        fruit.setCoords(fruitShape.x, fruitShape.y);
         fruit.initMovement();
         const handleFruitEvent = () => {
             this.player.addScore(fruit.score);
@@ -112,7 +117,7 @@ class GameActivity extends Activity{
                     height: fruitShape.image.height
                 }
             );
-        }
+        };
 
         fruitShape.on('mouseover', () => {
             if(!this.isMouseDown){
@@ -126,6 +131,7 @@ class GameActivity extends Activity{
         fruitShape.addEventListener('fruitout', () => {
             this.objects.splice(this.objects.indexOf(fruit), 1);
             this.activeObjectsContainer.removeChild(fruitShape);
+            fruitShape.removeAllEventListeners();
         });
         this.objects.push(fruit);
 
@@ -136,21 +142,8 @@ class GameActivity extends Activity{
         const cutParts = fruit.getCutParts();
         const initialShift = fruit.getInitedCutPartShift(size);
 
-        const leftPartImage = this.assetsLoader.getImage(cutParts.l);
-        const leftPartShape = new createjs.Bitmap(leftPartImage);
-        leftPartShape.scale = options.imgScale;
-        leftPartShape.x = coords.x - leftPartShape.scale * leftPartImage.width / 2 + initialShift.left.x;
-        leftPartShape.y = coords.y + initialShift.left.y;
-        leftPartShape.regX = leftPartImage.width / 2;
-        leftPartShape.regY = leftPartImage.height / 2;
-
-        const rightPartImage = this.assetsLoader.getImage(cutParts.r);
-        const rightPartShape = new createjs.Bitmap(rightPartImage);
-        rightPartShape.scale = options.imgScale;
-        rightPartShape.x = coords.x + rightPartShape.scale * rightPartImage.width / 2 + initialShift.right.x;
-        rightPartShape.y = coords.y + initialShift.right.y;
-        rightPartShape.regX = rightPartImage.width / 2;
-        rightPartShape.regY = rightPartImage.height / 2;
+        this.placeCutPart(fruit, coords, cutParts.l, initialShift, false);
+        this.placeCutPart(fruit, coords, cutParts.r, initialShift, true);
 
         const spotImage = this.assetsLoader.getImage(cutParts.s);
         const spotShape = new createjs.Bitmap(spotImage);
@@ -160,20 +153,43 @@ class GameActivity extends Activity{
         spotShape.alpha = 0.7;
         spotShape.regX = spotImage.width / 2;
         spotShape.regY = spotImage.height / 2;
+        spotShape.rotation = Math.round(Math.random() * 360);
 
-        this.passiveObjectsContainer.addChild(leftPartShape);
-        this.passiveObjectsContainer.addChild(rightPartShape);
-        this.backgroundContainer.addChild(spotShape);
-        this.fallDownCutShape(leftPartShape, {x: leftPartShape.x - size.width / 2, y: leftPartShape.y, rotation: -90});
-        this.fallDownCutShape(rightPartShape, {x: rightPartShape.x + size.width / 2, y: rightPartShape.y, rotation: 90});        
+        this.backgroundContainer.addChild(spotShape);       
     }
 
-    fallDownCutShape(shape, coords){
-        const fallTime = this.getFallTime(coords.y);
-        createjs.Tween.get(shape, {loop: false, onComplete: () => {
-            this.passiveObjectsContainer.removeChild(shape);
-        }})
-        .to({x: coords.x, y: options.h + options.fruitStartYOffset, rotation: coords.rotation}, fallTime, createjs.Ease.getPowIn(2));
+    placeCutPart(fruit, coords, imgId, initialShift, isRight){
+        const partImage = this.assetsLoader.getImage(imgId);
+        const partShape = new createjs.Bitmap(partImage);
+        partShape.scale = options.imgScale;
+        if(isRight){
+            partShape.x = coords.x + partShape.scale * partImage.width / 2 + initialShift.right.x;
+            partShape.y = coords.y + initialShift.right.y;
+        }else{
+            partShape.x = coords.x - partShape.scale * partImage.width / 2 + initialShift.left.x;
+            partShape.y = coords.y + initialShift.left.y;
+        }
+        partShape.regX = partImage.width / 2;
+        partShape.regY = partImage.height / 2;
+        const coordsSift = coordsHelper.calcRotationShift(coords, {x: partShape.x, y: partShape.y}, coords.rotation + (isRight ? initialShift.right.rotation : initialShift.left.rotation));
+        partShape.x = coordsSift.x;
+        partShape.y = coordsSift.y;
+        partShape.rotation = coords.rotation;
+
+        const partObject = new GameObject();
+        partObject.setShape(partShape);
+        partObject.setCoords(partShape.x, partShape.y, partShape.rotation);
+        partObject.setSpeed(fruit.speed);
+        partObject.setSpeedX(fruit.speedX);
+        partObject.setSpeedY(fruit.speedY);
+        partObject.setRotationSpeed(isRight ? fruit.rotationSpeed/4 : -1 * fruit.rotationSpeed/4);
+        this.objects.push(partObject);
+        partShape.addEventListener('fruitout', () => {
+            this.objects.splice(this.objects.indexOf(partObject), 1);
+            this.passiveObjectsContainer.removeChild(partShape);
+            partShape.removeAllEventListeners();
+        });
+        this.passiveObjectsContainer.addChild(partShape);
     }
 
     getRandomFruit(){

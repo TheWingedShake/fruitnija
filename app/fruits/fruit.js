@@ -1,7 +1,9 @@
 import { options } from '../options';
-class Fruit{
+import { GameObject } from './gameObject';
+class Fruit extends GameObject{
 
     constructor(){
+        super();
         this.score = 0;
         this.time = 0;
         this.id = '';
@@ -94,7 +96,7 @@ class Fruit{
                 y: 0,
                 rotation: 0
             }
-        }
+        };
     }
 
 }
