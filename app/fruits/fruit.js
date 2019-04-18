@@ -9,6 +9,44 @@ class Fruit extends GameObject{
         this.id = '';
     }
 
+    setShape(shape){
+        this.shape = shape;
+    }
+
+    initMovement(){
+        const randomAdditionSpeed = Math.floor(Math.random() * (options.maxSpeed - options.minSpeed));
+        this.speed = 450 + randomAdditionSpeed;
+        const middleX = options.w / 2;
+        const b = options.h / 2;
+        const a = (this.shape.x < middleX) ? (middleX - this.shape.x) : (this.shape.x - middleX);
+        const tan = b / a;
+        const angle = Math.atan(tan);
+        this.speedY = Math.sin(angle) * this.speed;
+        this.speedX = (1 - Math.sin(angle)) * this.speed;
+        if(this.shape.x > middleX){
+            this.speedX *= -1;
+        }
+        this.rotationSpeed = Math.floor(Math.random() * options.maxRotationSpeed);
+    }
+
+    move(){
+        this.shape.y -= this.speedY / createjs.Ticker.framerate;
+        this.shape.x += this.speedX / createjs.Ticker.framerate;
+        this.speedY += options.acceleration / createjs.Ticker.framerate;
+        this.shape.rotation += this.rotationSpeed / createjs.Ticker.framerate;
+    }
+
+    isOut(){
+        if(Math.abs(this.speedY) > this.speed && this.shape.y > options.h){
+            return true;
+        }
+        return false;
+    }
+
+    removeShape(){
+        this.shape.dispatchEvent('fruitout');
+    }
+
     generatePath(imgWidth){
         const xLeftRange = [imgWidth / 2, options.w/3];
         const xRightRange = [2 * options.w/3, options.w - imgWidth / 2];
