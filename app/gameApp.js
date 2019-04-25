@@ -13,7 +13,11 @@ class GameApp{
         const canvas = document.getElementById('gameapp');
         this.stage = new createjs.Stage(canvas);
         this.stage.enableDOMEvents(true);
+        createjs.Ticker.interval = 30;
         createjs.Ticker.addEventListener("tick", this.stage);
+        createjs.Touch.enable(this.stage, false, true);
+        this.stage.preventSelection = false;
+        this.stage.enableMouseOver(10);
         this.currentActivityIndex = 0;
         this.activities = [
             StartActivity,

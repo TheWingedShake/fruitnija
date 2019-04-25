@@ -19,16 +19,16 @@ class YellowFruit extends Fruit{
     getInitedCutPartShift(size){
         return {
             right: {
-                x: -size.width / 2,
-                y: size.height / 4,
+                x: -20,
+                y: 0,
                 rotation: 90
             },
             left: {
-                x: size.width / 2,
-                y: -size.height / 4,
+                x: 20,
+                y: 0,
                 rotation: 90
             }
-        }
+        };
     }
 
 }

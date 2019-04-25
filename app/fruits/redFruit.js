@@ -16,6 +16,21 @@ class RedFruit extends Fruit{
         };
     }
 
+    getInitedCutPartShift(size){
+        return {
+            right: {
+                x: -5,
+                y: 0,
+                rotation: 0
+            },
+            left: {
+                x: 5,
+                y: 0,
+                rotation: 0
+            }
+        };
+    }
+
 }
 
 export { RedFruit };
