@@ -18,6 +18,7 @@ class GameActivity extends Activity{
         this.fruitCountJumpTime = options.fruitTimeStep;
         this.fruitLaunchCount = options.fruitStartCount;
         this.objects = [];
+        this.isMouseDown = false;
     }
 
     onInit(){
@@ -31,6 +32,8 @@ class GameActivity extends Activity{
             if(this.time <= 0){
                 createjs.Ticker.removeEventListener("tick", this.handleTick);
                 this.objects = [];
+                this.stage.removeEventListener("stagemousedown", this.handleMouseDown);
+                this.stage.removeEventListener("stagemouseup", this.handleMouseUp);
                 this.stage.dispatchEvent('nextAcitity');
                 return;
             }
@@ -46,7 +49,15 @@ class GameActivity extends Activity{
             }
             this.processObjects();
         };
+        this.handleMouseDown = () => {
+            this.isMouseDown = true;
+        };
+        this.handleMouseUp = () => {
+            this.isMouseDown = false;
+        };
         createjs.Ticker.addEventListener("tick", this.handleTick);
+        this.stage.addEventListener("stagemousedown", this.handleMouseDown);
+        this.stage.addEventListener("stagemouseup", this.handleMouseUp);
     }
 
     createUI(){
@@ -83,7 +94,7 @@ class GameActivity extends Activity{
         fruitShape.y = options.h + options.fruitStartYOffset;
         fruit.setShape(fruitShape);
         fruit.initMovement();
-        fruitShape.on('click', () => {
+        const handleFruitEvent = () => {
             this.player.addScore(fruit.score);
             this.scoreObject.set({text: `Score: ${this.player.score}`});
             this.activeObjectsContainer.removeChild(fruitShape);
@@ -101,9 +112,19 @@ class GameActivity extends Activity{
                     height: fruitShape.image.height
                 }
             );
+        }
+
+        fruitShape.on('mouseover', () => {
+            if(!this.isMouseDown){
+                return;
+            }
+            handleFruitEvent();
+        });
+        fruitShape.on('mousedown', () => {
+            handleFruitEvent();
         });
         fruitShape.addEventListener('fruitout', () => {
-            this.objects.splice(this.objects.indexOf(fruit), 1);
+            this.objects.splice(this.objects.indexOf(fruit), 1);      
             this.activeObjectsContainer.removeChild(fruitShape);
         });
         this.objects.push(fruit);
