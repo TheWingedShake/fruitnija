@@ -19,8 +19,8 @@ class GameActivity extends Activity{
         this.nextFruitLaunch = options.fruitReloadTime;
         this.fruitCountJumpTime = options.fruitTimeStep;
         this.fruitLaunchCount = options.fruitStartCount;
-        this.isMouseDown = false;
         this.objects = [];
+        this.isMouseDown = false;
     }
 
     onInit(){
@@ -33,9 +33,9 @@ class GameActivity extends Activity{
             this.timeObject.set({text: `Time: ${Math.round(this.time)}`});
             if(this.time <= 0){
                 createjs.Ticker.removeEventListener("tick", this.handleTick);
+                this.objects = [];
                 this.stage.removeEventListener("stagemousedown", this.handleMouseDown);
                 this.stage.removeEventListener("stagemouseup", this.handleMouseUp);
-                this.objects = [];
                 this.stage.dispatchEvent('nextAcitity');
                 return;
             }
